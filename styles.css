@@ -1,0 +1,154 @@
+:root {
+  --bg: #ffffff;
+  --text: #111111;
+  --muted: #6b6b6b;
+  --line: #e5e5e5;
+  --input-line: #d4d4d4;
+  --accent: #0f766e;
+  --accent-soft: rgba(15, 118, 110, 0.14);
+  --accent-text: #ffffff;
+  --test: #b45309;
+  --error: #b91c1c;
+  --error-soft: #fef2f2;
+  --mono: ui-monospace, Consolas, monospace;
+  --sans: system-ui, "Microsoft JhengHei", "PingFang TC", sans-serif;
+}
+
+* { box-sizing: border-box; }
+
+html { background: var(--bg); }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: 280px minmax(0, 1fr);
+  min-height: 100vh;
+}
+
+/* Settings column */
+.panel {
+  position: sticky;
+  top: 0;
+  align-self: start;
+  height: 100vh;
+  overflow-y: auto;
+  padding: 28px 22px;
+  border-right: 1px solid var(--line);
+}
+
+.panel h1 { margin: 0; font-size: 20px; }
+.panel .sub { margin: 2px 0 24px; color: var(--muted); font-size: 13px; }
+
+.panel label {
+  display: block;
+  margin: 16px 0 6px;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.panel select,
+.panel input {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid var(--input-line);
+  border-radius: 6px;
+  background: var(--bg);
+  color: var(--text);
+  font: inherit;
+  font-size: 14px;
+}
+
+.panel input:disabled { background: #fafafa; color: var(--muted); }
+
+.panel button {
+  width: 100%;
+  margin-top: 22px;
+  padding: 9px;
+  border: 0;
+  border-radius: 6px;
+  background: var(--accent);
+  color: var(--accent-text);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.panel button:hover { filter: brightness(1.1); }
+
+#status { margin: 16px 0 0; font-size: 13px; color: var(--muted); }
+#status:empty { display: none; }
+#status.error {
+  padding: 10px 12px;
+  border-left: 3px solid var(--error);
+  background: var(--error-soft);
+  color: var(--error);
+}
+
+/* Results column */
+main {
+  padding: 28px 40px 64px;
+  max-width: 960px;
+}
+
+section { padding: 24px 0; border-bottom: 1px solid var(--line); }
+section:last-child { border-bottom: 0; }
+section h2 { margin: 0 0 8px; font-size: 17px; }
+.note { margin: 0 0 12px; color: var(--muted); font-size: 13px; }
+
+.todo { color: var(--error); font-weight: 600; }
+
+/* Key numbers */
+.stats { display: flex; flex-wrap: wrap; gap: 12px 36px; margin: 8px 0; }
+.stat span { display: block; color: var(--muted); font-size: 12px; }
+.stat b { font-family: var(--mono); font-size: 22px; font-weight: 600; }
+
+/* Tables */
+table { width: 100%; border-collapse: collapse; font-size: 14px; }
+th, td { padding: 6px 10px; border-bottom: 1px solid var(--line); text-align: left; }
+th { color: var(--muted); font-size: 12px; font-weight: 500; }
+td.num { font-family: var(--mono); text-align: right; white-space: nowrap; }
+th.num { text-align: right; }
+tr.significant td { color: var(--accent); }
+.table-wrap { overflow-x: auto; }
+
+ul.dropped { margin: 8px 0 0; padding-left: 20px; font-size: 14px; }
+
+/* Slider */
+.slider { display: flex; align-items: center; gap: 14px; margin-bottom: 8px; }
+.slider input { flex: 1; accent-color: var(--accent); }
+.slider output { font-family: var(--mono); font-size: 14px; white-space: nowrap; }
+
+/* Charts */
+.chart { display: block; width: 100%; height: auto; font-family: var(--sans); }
+.chart .grid { stroke: var(--line); }
+.chart .axis { stroke: var(--muted); }
+.chart .tick { fill: var(--muted); font-family: var(--mono); font-size: 11px; }
+.chart .axis-title, .chart .legend { fill: var(--text); font-size: 12px; }
+.chart .band { fill: var(--accent-soft); stroke: none; }
+.chart .line-fit { fill: none; stroke: var(--accent); stroke-width: 2; }
+.chart .dot { fill: var(--text); fill-opacity: 0.7; }
+.chart .zero { stroke: var(--accent); stroke-width: 1.5; stroke-dasharray: 4 4; }
+.chart .line-train, .chart .swatch-train { fill: none; stroke: var(--accent); stroke-width: 2; }
+.chart .line-test, .chart .swatch-test { fill: none; stroke: var(--test); stroke-width: 2; stroke-dasharray: 5 3; }
+.chart .marker { stroke: var(--muted); stroke-width: 1; stroke-dasharray: 2 3; }
+
+/* Phone: settings move above results */
+@media (max-width: 760px) {
+  .layout { grid-template-columns: minmax(0, 1fr); }
+  .panel {
+    position: static;
+    height: auto;
+    padding: 20px 16px;
+    border-right: 0;
+    border-bottom: 1px solid var(--line);
+  }
+  main { padding: 8px 16px 48px; }
+}

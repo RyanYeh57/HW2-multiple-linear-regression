@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>HW2 多元線性回歸</title>
+  <link rel="stylesheet" href="styles.css">
+  <script type="module" src="js/app.js"></script>
+</head>
+<body>
+  <div class="layout">
+    <aside class="panel">
+      <h1>Regression Lab</h1>
+      <p class="sub">HW2 · 多元線性回歸</p>
+
+      <label for="dataset">資料集</label>
+      <select id="dataset">
+        <option value="flood">Predict the Flood</option>
+        <option value="startups">50 Startups</option>
+        <option value="custom">自訂網址</option>
+      </select>
+
+      <label for="url">CSV 網址</label>
+      <input id="url" type="url" disabled
+        placeholder="https://raw.githubusercontent.com/Avik-Jain/100-Days-Of-ML-Code/master/datasets/50_Startups.csv">
+
+      <label for="target">目標欄位（要預測的值）</label>
+      <select id="target"></select>
+
+      <button id="run" type="button">分析</button>
+      <p id="status" role="status"></p>
+    </aside>
+
+    <main>
+      <section id="overview" class="result" hidden>
+        <h2>1. 資料概覽</h2>
+        <div class="body"></div>
+      </section>
+
+      <section id="selection" class="result" hidden>
+        <h2>2. 特徵選擇（Backward Elimination）</h2>
+        <p class="note">從全部特徵開始，每一步刪掉訓練集上 p 值最大的特徵。拖動滑桿看不同特徵數的結果。</p>
+        <div class="slider">
+          <input type="range" id="k" min="1" max="1" step="1" value="1">
+          <output id="k-label" for="k"></output>
+        </div>
+        <div class="body"></div>
+      </section>
+
+      <section id="metrics" class="result" hidden>
+        <h2>3. 模型評估（測試集）</h2>
+        <div class="body"></div>
+      </section>
+
+      <section id="prediction" class="result" hidden>
+        <h2>4. 預測圖與 95% 預測區間</h2>
+        <p class="note">黑點 = 實際值；綠線 = 預測值；淺綠帶 = 95% 預測區間。資料來自測試集。</p>
+        <div class="body"></div>
+      </section>
+
+      <section id="residuals" class="result" hidden>
+        <h2>5. 殘差圖</h2>
+        <p class="note">殘差 = 實際 − 預測。點平均散在 0 附近、沒有明顯形狀，表示線性模型合適。</p>
+        <div class="body"></div>
+      </section>
+
+      <section id="coefs" class="result" hidden>
+        <h2>6. 迴歸係數</h2>
+        <p class="note">用訓練集估計。p &lt; 0.05 的列以綠色標示。</p>
+        <div class="body"></div>
+      </section>
+
+      <section id="crisp-dm">
+        <h2>CRISP-DM 流程</h2>
+      </section>
+
+      <section id="ai-gpt">
+        <h2>GPT 輔助內容</h2>
+      </section>
+
+      <section id="ai-notebooklm">
+        <h2>NotebookLM 摘要</h2>
+      </section>
+
+      <section id="sources">
+        <h2>資料來源</h2>
+      </section>
+    </main>
+  </div>
+</body>
+</html>
