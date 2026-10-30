@@ -17,6 +17,13 @@ const SUMMARY_LABELS = {
   trainRows: '訓練集筆數（80%）',
   testRows: '測試集筆數（20%）',
 };
+const ALGORITHM_NOTES = {
+  backward: '從全部特徵開始，每一步刪掉訓練集上 p 值最大的特徵。',
+  forward: '從一個特徵開始，每一步加入訓練集上 p 值最小的特徵。',
+  kbest: '依訓練集中特徵和目標的相關強度排序，逐步保留最相關的特徵。',
+  rfe: '從全部特徵開始，每一步刪掉訓練集上絕對 t 值最小的特徵。',
+  lasso: '用訓練集 Lasso 係數的絕對值排序，逐步保留係數較大的特徵。',
+};
 
 const $ = id => document.getElementById(id);
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
@@ -97,6 +104,7 @@ async function runAnalysis() {
     slider.max = steps.length;
     slider.value = steps[defaultIndex].names.length;
     renderOverview(result.prep);
+    $('selection-note').textContent = `${ALGORITHM_NOTES[$('algorithm').value]} 拖動滑桿看不同特徵數的結果。測試線僅供參考，用它挑特徵數等於偷看測試集。`;
     renderStep(defaultIndex);
     setStatus('');
   } catch (err) {
