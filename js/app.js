@@ -1,5 +1,5 @@
 import { parseCsv } from './csv.js';
-import { analyze, fitStep } from './analyze.js';
+import { analyze, compareModels, fitStep } from './analyze.js';
 import { selectionChart, predictionChart, residualChart } from './charts.js';
 import { AnalysisError } from './errors.js';
 
@@ -8,7 +8,7 @@ const DATASETS = {
   startups: { url: 'data/50_Startups.csv', target: 'Profit' },
 };
 const LOAD_ERROR = '讀不到資料。請確認網址正確，並使用允許跨站讀取的網址（例如 GitHub raw）。Kaggle 網址需登入，無法直接讀取。';
-const RESULT_IDS = ['overview', 'selection', 'metrics', 'prediction', 'residuals', 'coefs'];
+const RESULT_IDS = ['overview', 'selection', 'model-comparison', 'metrics', 'prediction', 'residuals', 'coefs'];
 const SUMMARY_LABELS = {
   rows: '可用資料筆數',
   droppedTargetRows: '目標欄空白而刪掉的筆數',
@@ -91,7 +91,7 @@ async function runAnalysis() {
   setStatus('分析中…');
   await nextFrame(); // let the status paint before the synchronous fit
   try {
-    result = analyze(table, $('target').value);
+    result = analyze(table, $('target').value, $('algorithm').value);
     const { steps, defaultIndex } = result.selection;
     const slider = $('k');
     slider.max = steps.length;
@@ -129,6 +129,7 @@ function renderStep(index) {
   const { prep, selection } = result;
   const step = selection.steps[index];
   const fit = fitStep(prep, step);
+  const comparison = compareModels(prep, step);
   const isDefault = index === selection.defaultIndex;
 
   $('k-label').textContent = `${step.names.length} 個特徵${isDefault ? '（預設）' : ''}`;
@@ -140,6 +141,12 @@ function renderStep(index) {
 
   const m = fit.metrics;
   const stat = (label, value) => `<div class="stat"><span>${label}</span><b>${value}</b></div>`;
+  show('model-comparison', `<div class="table-wrap"><table><thead><tr><th>模型</th><th class="num">R²</th>` +
+    `<th class="num">Adjusted R²</th><th class="num">MAE</th><th class="num">RMSE</th></tr></thead><tbody>` +
+    comparison.rows.map(row => `<tr><td>${esc(row.name)}</td><td class="num">${r2(row.metrics.r2)}</td>` +
+      `<td class="num">${r2(row.metrics.adjR2)}</td><td class="num">${num(row.metrics.mae)}</td>` +
+      `<td class="num">${num(row.metrics.rmse)}</td></tr>`).join('') + '</tbody></table></div>');
+
   show('metrics', `<div class="stats">${[
     stat('R²', r2(m.r2)),
     stat('Adjusted R²', r2(m.adjR2)),
@@ -174,6 +181,9 @@ $('dataset').addEventListener('change', () => {
 });
 
 $('run').addEventListener('click', loadAndAnalyze);
+$('algorithm').addEventListener('change', () => {
+  if (table) runAnalysis();
+});
 $('url').addEventListener('keydown', e => {
   if (e.key === 'Enter') loadAndAnalyze();
 });

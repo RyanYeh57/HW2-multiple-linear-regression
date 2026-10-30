@@ -27,6 +27,15 @@
       <label for="target">目標欄位（要預測的值）</label>
       <select id="target"></select>
 
+      <label for="algorithm">Feature Selection Algorithm</label>
+      <select id="algorithm">
+        <option value="backward">Backward Elimination</option>
+        <option value="forward">Forward Selection</option>
+        <option value="kbest">SelectKBest</option>
+        <option value="rfe">RFE</option>
+        <option value="lasso">Lasso</option>
+      </select>
+
       <button id="run" type="button">分析</button>
       <p id="status" role="status"></p>
     </aside>
@@ -38,7 +47,7 @@
       </section>
 
       <section id="selection" class="result" hidden>
-        <h2>2. 特徵選擇（Backward Elimination）</h2>
+        <h2>2. Feature Selection Algorithm（特徵選擇）</h2>
         <p class="note">從全部特徵開始，每一步刪掉訓練集上 p 值最大的特徵。拖動滑桿看不同特徵數的結果。測試線僅供參考，用它挑特徵數等於偷看測試集。</p>
         <div class="slider">
           <input type="range" id="k" min="1" max="1" step="1" value="1">
@@ -47,25 +56,31 @@
         <div class="body"></div>
       </section>
 
+      <section id="model-comparison" class="result" hidden>
+        <h2>3. Comparison of Regression Models</h2>
+        <p class="note">Linear Regression、Ridge、Lasso 使用同一組特徵和測試集比較。測試集只用來評估，不用來挑模型。</p>
+        <div class="body"></div>
+      </section>
+
       <section id="metrics" class="result" hidden>
-        <h2>3. 模型評估（測試集）</h2>
+        <h2>4. 模型評估（測試集）</h2>
         <div class="body"></div>
       </section>
 
       <section id="prediction" class="result" hidden>
-        <h2>4. 預測圖與 95% 預測區間</h2>
+        <h2>5. 預測圖與 95% 預測區間</h2>
         <p class="note">黑點 = 實際值；綠線 = 預測值；淺綠帶 = 95% 預測區間。資料來自測試集。</p>
         <div class="body"></div>
       </section>
 
       <section id="residuals" class="result" hidden>
-        <h2>5. 殘差圖</h2>
+        <h2>6. 殘差圖</h2>
         <p class="note">殘差 = 實際 − 預測。點平均散在 0 附近、沒有明顯形狀，表示線性模型合適。</p>
         <div class="body"></div>
       </section>
 
       <section id="coefs" class="result" hidden>
-        <h2>6. 迴歸係數</h2>
+        <h2>7. 迴歸係數</h2>
         <p class="note">用訓練集估計。p &lt; 0.05 的列以綠色標示。</p>
         <div class="body"></div>
       </section>
