@@ -1,0 +1,13 @@
+[
+  { "id": "F-01", "description": "下拉選單可切換 Predict the Flood 與 50 Startups 並自動分析", "verification_steps": ["headless 開首頁，#metrics 有 R² 數字（Flood）", "headless 確認 #dataset 有 flood、startups、custom 三個選項"], "passes": false },
+  { "id": "F-02", "description": "貼 CSV 網址可即時分析（加分 2）", "verification_steps": ["headless 開 ?url=<spec 50 Startups raw 網址>", "#target 預設 Profit、#metrics 有數字、#status 無錯誤"], "passes": false },
+  { "id": "F-03", "description": "讀不到網址時顯示錯誤，不會空白或當掉", "verification_steps": ["headless 開 ?url=https://example.invalid/a.csv", "#status 含「讀不到資料」"], "passes": false },
+  { "id": "F-04", "description": "OLS、p-value、預測區間、R²/AdjR²/MAE/RMSE 數值正確", "verification_steps": ["npm test 的 stats 測試全過"], "passes": false },
+  { "id": "F-05", "description": "前處理：80/20 seed 42、補值、One-Hot 丟第一類、丟 ID 欄與常數欄、防呆錯誤", "verification_steps": ["npm test 的 prep 測試全過"], "passes": false },
+  { "id": "F-06", "description": "Backward elimination 與滑桿；預設為訓練集 p<0.05 那一步；圖有訓練與測試兩條線", "verification_steps": ["npm test 的 select 測試全過", "headless 截圖可見滑桿與兩條線"], "passes": false },
+  { "id": "F-07", "description": "預測圖含 95% 預測區間帶、殘差圖、係數表（含 SE、p-value）", "verification_steps": ["npm test 的 analyze 測試全過（lo<fit<hi）", "headless 截圖可見帶狀區間與殘差圖"], "passes": false },
+  { "id": "F-08", "description": "Flood 分析在 5 秒內完成，20 個特徵", "verification_steps": ["npm test 的 Flood end to end 測試通過"], "passes": false },
+  { "id": "F-09", "description": "樣式 B，且與舊作業不同；手機寬不橫向捲動", "verification_steps": ["1400 寬截圖：白底、左欄、墨綠", "390 寬截圖：單欄無橫向捲動", "grep styles.css 無 #5b55db、無 Inter"], "passes": false },
+  { "id": "F-10", "description": "CRISP-DM 六階段、GPT 輔助內容、NotebookLM 摘要（紅色待補）、資料來源", "verification_steps": ["headless dump-dom 四個 section 有內容", "標題文字正好為「GPT 輔助內容」「NotebookLM 摘要」", ".todo 存在"], "passes": false },
+  { "id": "F-11", "description": "README 與線上 GitHub Pages 可用", "verification_steps": ["README 存在且含線上網址、本機預覽、測試指令", "線上網址回 200，headless 線上 #metrics 有數字"], "passes": false }
+]
