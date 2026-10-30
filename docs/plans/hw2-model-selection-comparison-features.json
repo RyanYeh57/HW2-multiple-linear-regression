@@ -1,0 +1,26 @@
+[
+  {
+    "id": "F-12",
+    "description": "Feature Selection Algorithm 可切換 Backward、Forward、SelectKBest、RFE、Lasso，且每種方法能產生滑桿步驟",
+    "verification_steps": ["npm test 的 select 測試全過", "headless 看到 #algorithm 五個選項", "切換 lasso 後 #selection 與 #metrics 仍有結果"],
+    "passes": false
+  },
+  {
+    "id": "F-13",
+    "description": "Comparison of Regression Models 顯示 Linear Regression、Ridge、Lasso 與 R²、Adjusted R²、MAE、RMSE",
+    "verification_steps": ["npm test 的 analyze 測試全過", "headless #model-comparison 有三列模型和四個指標"],
+    "passes": false
+  },
+  {
+    "id": "F-14",
+    "description": "所有特徵選擇只使用 training split，Flood 和 50 Startups 都能完成比較",
+    "verification_steps": ["selection 測試將 ytest 改成亂數後步驟不變", "npm test 全部通過", "Flood headless 無錯誤且有模型比較表"],
+    "passes": false
+  },
+  {
+    "id": "F-15",
+    "description": "文件同步說明五種特徵選擇、三種模型與 lambda 設定",
+    "verification_steps": ["README、進度檔、設計文件都有新規則", "git diff --check 通過"],
+    "passes": false
+  }
+]
