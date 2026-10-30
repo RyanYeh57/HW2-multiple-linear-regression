@@ -147,6 +147,76 @@ export function ols(X, y) {
   return { coef, se, t, p: pv, sigma2, df, XtXinv, n, k };
 }
 
+function scaledColumns(X) {
+  const n = X.length;
+  const k = X[0]?.length ?? 0;
+  const mean = new Array(k).fill(0);
+  const scale = new Array(k).fill(0);
+  for (const row of X) for (let j = 0; j < k; j++) mean[j] += row[j] / n;
+  for (const row of X) for (let j = 0; j < k; j++) scale[j] += ((row[j] - mean[j]) ** 2) / n;
+  for (let j = 0; j < k; j++) scale[j] = Math.sqrt(scale[j]) || 1;
+  const Z = X.map(row => row.map((v, j) => (v - mean[j]) / scale[j]));
+  return { Z, mean, scale };
+}
+
+// Ridge regression with an unpenalized intercept.
+export function ridge(X, y, lambda = 1) {
+  const n = X.length;
+  const k = X[0]?.length ?? 0;
+  if (n === 0) throw new AnalysisError('沒有資料可供回歸');
+  const { Z } = scaledColumns(X);
+  const p = k + 1;
+  const XtX = Array.from({ length: p }, () => new Array(p).fill(0));
+  const Xty = new Array(p).fill(0);
+  for (let i = 0; i < n; i++) {
+    const row = [1, ...Z[i]];
+    for (let a = 0; a < p; a++) {
+      Xty[a] += row[a] * y[i];
+      for (let b = 0; b < p; b++) XtX[a][b] += row[a] * row[b];
+    }
+  }
+  for (let j = 1; j < p; j++) XtX[j][j] += lambda;
+  const scaledCoef = invert(XtX).map(row => row.reduce((sum, v, j) => sum + v * Xty[j], 0));
+  const { mean, scale } = scaledColumns(X);
+  const coef = scaledCoef.map((v, j) => j === 0 ? v : v / scale[j - 1]);
+  coef[0] -= mean.reduce((sum, v, j) => sum + coef[j + 1] * v, 0);
+  return { coef };
+}
+
+const softThreshold = (value, amount) => Math.sign(value) * Math.max(Math.abs(value) - amount, 0);
+
+// Lasso regression with centered, scaled columns and an unpenalized intercept.
+export function lasso(X, y, lambda = 0.01, options = {}) {
+  const n = X.length;
+  const k = X[0]?.length ?? 0;
+  if (n === 0) throw new AnalysisError('沒有資料可供回歸');
+  const { Z, mean, scale } = scaledColumns(X);
+  const yMean = y.reduce((sum, v) => sum + v, 0) / n;
+  const centeredY = y.map(v => v - yMean);
+  const beta = new Array(k).fill(0);
+  const residual = centeredY.slice();
+  const maxIter = options.maxIter ?? 200;
+  const tolerance = options.tolerance ?? 1e-7;
+
+  for (let iter = 0; iter < maxIter; iter++) {
+    let maxChange = 0;
+    for (let j = 0; j < k; j++) {
+      let rho = 0;
+      for (let i = 0; i < n; i++) rho += Z[i][j] * (residual[i] + Z[i][j] * beta[j]);
+      const next = softThreshold(rho / n, lambda);
+      const change = next - beta[j];
+      if (change !== 0) for (let i = 0; i < n; i++) residual[i] -= Z[i][j] * change;
+      beta[j] = next;
+      maxChange = Math.max(maxChange, Math.abs(change));
+    }
+    if (maxChange < tolerance) break;
+  }
+
+  const coef = [yMean, ...beta.map((v, j) => v / scale[j])];
+  coef[0] -= mean.reduce((sum, v, j) => sum + coef[j + 1] * v, 0);
+  return { coef };
+}
+
 export function predict(model, X) {
   return X.map(row => row.reduce((acc, v, j) => acc + model.coef[j + 1] * v, model.coef[0]));
 }

@@ -2,7 +2,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { close } from './helpers.js';
 import { AnalysisError } from '../js/errors.js';
-import { tCdf, tQuantile, ols, predict, predictionInterval, metrics } from '../js/stats.js';
+import { tCdf, tQuantile, ols, ridge, lasso, predict, predictionInterval, metrics } from '../js/stats.js';
 
 test('tQuantile known values', () => {
   close(tQuantile(0.975, 3), 3.182446, 1e-4);
@@ -53,4 +53,21 @@ test('metrics', () => {
 
 test('collinear columns throw AnalysisError', () => {
   assert.throws(() => ols([[1, 1], [2, 2], [3, 3], [4, 4]], [1, 2, 3, 5]), AnalysisError);
+});
+
+test('ridge shrinks a coefficient on correlated features', () => {
+  const X = Array.from({ length: 30 }, (_, i) => [i, i + (i % 3 - 1) * 0.5]);
+  const y = X.map(([a, b]) => 1 + 2 * a + 0.5 * b);
+  const ordinary = ols(X, y);
+  const regularized = ridge(X, y, 10);
+  assert.ok(regularized.coef.every(Number.isFinite));
+  assert.ok(Math.abs(regularized.coef[1]) < Math.abs(ordinary.coef[1]));
+});
+
+test('lasso gives the signal feature a larger coefficient than noise', () => {
+  const X = Array.from({ length: 40 }, (_, i) => [i / 10, ((i * 17) % 11) - 5]);
+  const y = X.map(([signal]) => 3 + 4 * signal);
+  const regularized = lasso(X, y, 0.1);
+  assert.ok(regularized.coef.every(Number.isFinite));
+  assert.ok(Math.abs(regularized.coef[1]) > Math.abs(regularized.coef[2]) * 2);
 });
