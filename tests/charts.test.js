@@ -40,3 +40,8 @@ test('charts survive a zero-width range', () => {
   const flat = [{ actual: 1, fit: 1, lo: 1, hi: 1 }, { actual: 1, fit: 1, lo: 1, hi: 1 }];
   assert.doesNotMatch(predictionChart(flat) + residualChart(flat), /NaN|Infinity/);
 });
+
+test('niceTicks terminates on a range of a few ULPs', () => {
+  const ticks = niceTicks(1, 1 + 2 ** -52 * 3, 5);
+  assert.ok(ticks.length >= 2 && ticks.length <= 20, `got ${ticks.length} ticks`);
+});

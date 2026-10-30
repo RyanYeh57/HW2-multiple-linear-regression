@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import { close } from './helpers.js';
 import { AnalysisError } from '../js/errors.js';
 import { splitIndices, prepare } from '../js/prep.js';
+import { ols } from '../js/stats.js';
 
 const rows = (n, fn) => Array.from({ length: n }, (_, i) => fn(i));
 
@@ -59,4 +60,25 @@ test('more than 100 encoded features throws', () => {
   const headers = [...Array.from({ length: 101 }, (_, j) => `f${j}`), 'y'];
   const t = { headers, rows: rows(300, i => headers.map((_, j) => String((i * 7 + j * 13) % 23))) };
   assert.throws(() => prepare(t, 'y'), AnalysisError);
+});
+
+test('category seen only in the test set is not a feature, and the fit still works', () => {
+  const rare = splitIndices(60).test[0];
+  const t = { headers: ['x', 'S', 'y'], rows: rows(60, i => [String(i), i === rare ? 'Z' : ['A', 'B'][i % 2], String(i * 2 + (i % 3))]) };
+  const p = prepare(t, 'y');
+  assert.deepEqual(p.featureNames, ['x', 'S_B']);
+  assert.doesNotThrow(() => ols(p.Xtrain, p.ytrain));
+});
+
+test('numeric column constant in the training set is dropped', () => {
+  const testIdx = new Set(splitIndices(60).test);
+  const t = { headers: ['x', 'c', 'y'], rows: rows(60, i => [String(i), testIdx.has(i) ? String(i) : '5', String(i * 2 + (i % 3))]) };
+  const p = prepare(t, 'y');
+  assert.deepEqual(p.featureNames, ['x']);
+  assert.deepEqual(p.dropped, [{ name: 'c', reason: '所有值都一樣' }]);
+});
+
+test('constant target throws', () => {
+  const t = { headers: ['x', 'y'], rows: rows(30, i => [String(i), '1']) };
+  assert.throws(() => prepare(t, 'y'), /所有值都一樣/);
 });

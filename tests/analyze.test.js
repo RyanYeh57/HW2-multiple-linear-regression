@@ -42,6 +42,16 @@ test('Flood data has noise: R² below 0.99 and intervals wider than 0.01', () =>
   assert.ok(!prep.featureNames.includes('id'));
 });
 
+test('Flood fitStep is fast enough for slider dragging (< 150ms)', () => {
+  const { prep, selection } = analyze(load('data/flood.csv'), 'FloodProbability');
+  const step = selection.steps[selection.defaultIndex];
+  fitStep(prep, step); // warm up
+  const t0 = performance.now();
+  fitStep(prep, step);
+  const ms = performance.now() - t0;
+  assert.ok(ms < 150, `took ${ms.toFixed(0)}ms`);
+});
+
 test('sampleEvenly keeps ends and caps length', () => {
   const s = sampleEvenly([...Array(10000).keys()]);
   assert.equal(s.length, 500);

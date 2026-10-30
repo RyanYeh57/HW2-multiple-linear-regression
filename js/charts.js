@@ -6,7 +6,8 @@ const M = { left: 72, right: 40, top: 36, bottom: 52 };
 
 // Round step (1, 2, 5 × 10^n) ticks that cover [min, max].
 export function niceTicks(min, max, count = 5) {
-  if (min === max) {
+  // A range of a few ULPs would make `v += step` a no-op, so treat it as a single value.
+  if (max - min <= Math.abs(max) * 1e-9) {
     const pad = Math.abs(min) * 0.1 || 1;
     min -= pad;
     max += pad;

@@ -151,6 +151,14 @@ export function predict(model, X) {
   return X.map(row => row.reduce((acc, v, j) => acc + model.coef[j + 1] * v, model.coef[0]));
 }
 
+// tQuantile is a bisection; cache it so per-point intervals stay cheap.
+const tCache = new Map();
+function criticalT(level, df) {
+  const key = `${level}|${df}`;
+  if (!tCache.has(key)) tCache.set(key, tQuantile(1 - (1 - level) / 2, df));
+  return tCache.get(key);
+}
+
 export function predictionInterval(model, x, level = 0.95) {
   const x0 = [1, ...x];
   const fit = x0.reduce((acc, v, j) => acc + model.coef[j] * v, 0);
@@ -158,7 +166,7 @@ export function predictionInterval(model, x, level = 0.95) {
   for (let a = 0; a < x0.length; a++) {
     for (let b = 0; b < x0.length; b++) h += x0[a] * model.XtXinv[a][b] * x0[b];
   }
-  const half = tQuantile(1 - (1 - level) / 2, model.df) * Math.sqrt(model.sigma2 * (1 + h));
+  const half = criticalT(level, model.df) * Math.sqrt(model.sigma2 * (1 + h));
   return { fit, lo: fit - half, hi: fit + half };
 }
 

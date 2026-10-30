@@ -31,6 +31,8 @@ const isMissing = v => v === undefined || v.trim() === '';
 const isNumeric = v => Number.isFinite(Number(v.trim()));
 
 // Turns raw string cells into a numeric design matrix: one encoder per kept column.
+// Categories, constants and fill values come from training rows only; a category
+// seen only in the test set encodes as all zeros (the baseline category).
 function buildEncoders(headers, rows, targetIndex, trainIdx) {
   const encoders = [];
   const dropped = [];
@@ -41,20 +43,20 @@ function buildEncoders(headers, rows, targetIndex, trainIdx) {
     const values = rows.map(r => r[col]);
     const present = values.filter(v => !isMissing(v));
     missingCells += values.length - present.length;
+    const trainValues = trainIdx.map(i => values[i]);
 
     if (present.every(isNumeric)) {
-      if (new Set(present.map(v => Number(v.trim()))).size <= 1) {
+      const trainNumbers = trainValues.filter(v => !isMissing(v)).map(Number);
+      if (new Set(trainNumbers).size <= 1) {
         dropped.push({ name, reason: '所有值都一樣' });
         return;
       }
-      const trainValues = trainIdx.map(i => values[i]).filter(v => !isMissing(v)).map(Number);
-      const source = trainValues.length ? trainValues : present.map(Number);
-      const mean = source.reduce((a, b) => a + b, 0) / source.length;
+      const mean = trainNumbers.reduce((a, b) => a + b, 0) / trainNumbers.length;
       encoders.push({ names: [name], encode: v => [isMissing(v) ? mean : Number(v.trim())], col });
       return;
     }
 
-    const categories = [...new Set(values.map(v => (isMissing(v) ? MISSING_CATEGORY : v.trim())))].sort();
+    const categories = [...new Set(trainValues.map(v => (isMissing(v) ? MISSING_CATEGORY : v.trim())))].sort();
     if (categories.length > MAX_TEXT_CATEGORIES) {
       dropped.push({ name, reason: '不同值太多（像 ID）' });
       return;
@@ -90,6 +92,10 @@ export function prepare(table, target, opts = {}) {
   }
 
   const { train, test } = splitIndices(rows.length, testRatio, seed);
+  const yOf = r => Number(r[targetIndex].trim());
+  if (new Set(train.map(i => yOf(rows[i]))).size < 2) {
+    throw new AnalysisError(`目標欄「${target}」所有值都一樣，無法做回歸`);
+  }
   const { encoders, dropped, missingCells } = buildEncoders(table.headers, rows, targetIndex, train);
   const featureNames = encoders.flatMap(e => e.names);
 
@@ -102,7 +108,6 @@ export function prepare(table, target, opts = {}) {
   }
 
   const encodeRow = r => encoders.flatMap(e => e.encode(r[e.col]));
-  const yOf = r => Number(r[targetIndex].trim());
 
   return {
     Xtrain: train.map(i => encodeRow(rows[i])),
