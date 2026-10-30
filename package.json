@@ -1,0 +1,8 @@
+{
+  "name": "hw2-multiple-linear-regression",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test tests/"
+  }
+}
