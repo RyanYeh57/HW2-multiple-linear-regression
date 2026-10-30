@@ -1,10 +1,27 @@
 import { prepare } from './prep.js';
-import { ols, predict, predictionInterval, metrics } from './stats.js';
-import { backwardElimination, pickColumns } from './select.js';
+import { ols, ridge, lasso, predict, predictionInterval, metrics } from './stats.js';
+import { selectionAlgorithms, pickColumns } from './select.js';
 
-export function analyze(table, target) {
+export function analyze(table, target, algorithm = 'backward') {
   const prep = prepare(table, target);
-  return { prep, selection: backwardElimination(prep) };
+  const select = selectionAlgorithms[algorithm] || selectionAlgorithms.backward;
+  return { prep, selection: select(prep) };
+}
+
+export function compareModels(prep, step) {
+  const Xtrain = pickColumns(prep.Xtrain, step.features);
+  const Xtest = pickColumns(prep.Xtest, step.features);
+  const models = [
+    ['Linear Regression', ols(Xtrain, prep.ytrain)],
+    ['Ridge', ridge(Xtrain, prep.ytrain, 1)],
+    ['Lasso', lasso(Xtrain, prep.ytrain, 0.01)],
+  ];
+  return {
+    rows: models.map(([name, model]) => ({
+      name,
+      metrics: metrics(prep.ytest, predict(model, Xtest), step.features.length),
+    })),
+  };
 }
 
 // Fit OLS on the step's features; test-set points carry 95% prediction intervals.

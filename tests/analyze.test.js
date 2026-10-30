@@ -2,7 +2,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { parseCsv } from '../js/csv.js';
-import { analyze, fitStep, sampleEvenly } from '../js/analyze.js';
+import { analyze, compareModels, fitStep, sampleEvenly } from '../js/analyze.js';
 
 const load = path => parseCsv(readFileSync(path, 'utf8'));
 
@@ -58,4 +58,29 @@ test('sampleEvenly keeps ends and caps length', () => {
   assert.equal(s[0], 0);
   assert.equal(s.at(-1), 9999);
   assert.deepEqual(sampleEvenly([1, 2, 3]), [1, 2, 3]);
+});
+
+test('analyze supports forward selection', () => {
+  const result = analyze(load('data/50_Startups.csv'), 'Profit', 'forward');
+  assert.equal(result.selection.steps.length, result.prep.featureNames.length);
+  assert.ok(result.selection.steps.every(s => s.features.length === s.names.length));
+});
+
+test('compareModels returns Linear, Ridge and Lasso metrics', () => {
+  const { prep, selection } = analyze(load('data/50_Startups.csv'), 'Profit');
+  const result = compareModels(prep, selection.steps[0]);
+  assert.deepEqual(result.rows.map(row => row.name), ['Linear Regression', 'Ridge', 'Lasso']);
+  for (const row of result.rows) {
+    for (const key of ['r2', 'adjR2', 'mae', 'rmse']) assert.ok(Number.isFinite(row.metrics[key]), `${row.name} ${key}`);
+  }
+});
+
+test('compareModels is deterministic and test values only change metrics', () => {
+  const { prep, selection } = analyze(load('data/50_Startups.csv'), 'Profit');
+  const first = compareModels(prep, selection.steps[0]);
+  const second = compareModels(prep, selection.steps[0]);
+  assert.deepEqual(first, second);
+  const changed = compareModels({ ...prep, ytest: prep.ytest.map((value, i) => value + i * 1000) }, selection.steps[0]);
+  assert.deepEqual(changed.rows.map(row => row.name), first.rows.map(row => row.name));
+  assert.notDeepEqual(changed.rows.map(row => row.metrics), first.rows.map(row => row.metrics));
 });
