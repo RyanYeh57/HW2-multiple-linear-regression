@@ -131,7 +131,8 @@
 ### Task 5: Documentation, final verification and delivery
 
 **Files:**
-- Modify: `README.md`, `docs/plans/hw2-site-progress.md`, `docs/plans/hw2-site-features.json`, `docs/superpowers/specs/2026-10-30-hw2-regression-site-design.md`
+- Modify: `README.md`, `docs/plans/hw2-site-progress.md`, `docs/superpowers/specs/2026-10-30-hw2-regression-site-design.md`
+- Modify: `docs/plans/hw2-model-selection-comparison-features.json`
 
 - [ ] **Step 1: Update README and progress** with the five selection methods, three models, fixed lambda values, and the fact that test lines are descriptive only.
 - [ ] **Step 2: Mark new acceptance items in `hw2-site-features.json`** and keep F-11 false until GitHub Pages is actually verified.

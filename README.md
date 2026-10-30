@@ -9,7 +9,8 @@
 - 下拉選單切換兩個題目：**Predict the Flood**、**50 Startups**。
 - **自訂網址**：貼任何 CSV 網址，馬上分析。
 - 多元線性回歸（OLS），顯示係數、標準誤、p 值。
-- 特徵選擇：Backward Elimination。滑桿可切換特徵數。
+- Feature Selection Algorithm：Backward Elimination、Forward Selection、SelectKBest、RFE、Lasso。滑桿可切換特徵數。
+- Comparison of Regression Models：Linear Regression、Ridge（lambda = 1）、Lasso（lambda = 0.01）。
 - 模型評估（測試集）：R²、Adjusted R²、MAE、RMSE。
 - 預測圖含 **95% 預測區間**，另有殘差圖。
 
@@ -19,7 +20,8 @@
 2. 刪掉目標欄空白的列；數字缺值用訓練集平均補上；文字欄做 One-Hot（丟掉第一個類別）。
 3. 丟掉所有值都一樣的欄位，和不同值超過 20 個的文字欄（像 ID）。
 4. 80% 訓練、20% 測試，亂數種子 42。
-5. 只用訓練集做特徵選擇和擬合；指標在測試集計算。
+5. 只用訓練集做特徵選擇和擬合；指標在測試集計算。測試線只供參考，不用來挑方法或特徵數。
+6. 預測圖沿用 OLS，顯示 95% 預測區間；Ridge 和 Lasso 用於模型比較。
 
 ## 資料來源
 
@@ -61,5 +63,5 @@ npm test
 ## 限制
 
 - 自訂網址必須允許跨站讀取（CORS）。GitHub raw 可以；Kaggle 需要登入，讀不到。
-- 只做線性回歸。目標欄必須是數字。
+- 只做線性回歸家族：OLS、Ridge、Lasso。目標欄必須是數字。
 - 編碼後特徵最多 100 個。

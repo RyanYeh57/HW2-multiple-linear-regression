@@ -94,11 +94,11 @@ HW2 要用一個 14–39 個特徵的資料集做多元線性回歸，走完 CRI
 ### 5.4 特徵選擇與模型比較規則
 
 - **Backward Elimination**：從全部特徵開始，每一步刪掉 training OLS 中 p-value 最大的特徵。
-- **Forward Selection**：從零個特徵開始，每一步加入 training OLS p-value 最小且低於 0.05 的特徵；若沒有符合者，後續步驟以目前特徵集重複顯示。
+- **Forward Selection**：從零個特徵開始，每一步加入 training OLS p-value 最小的剩餘特徵；p-value 門檻只用於決定預設步驟，不會停止建立完整滑桿步驟。
 - **SelectKBest**：依 training 集中每個特徵與目標的單變量相關強度排序，建立前 1 到全部特徵的步驟。
 - **RFE**：從全部特徵開始，每一步刪掉 training OLS 中絕對 t 值最小的特徵。
-- **Lasso**：用 training 集 fit Lasso；依絕對係數由大到小建立前 1 到全部非零特徵的步驟，若非零特徵不足則補入剩餘特徵。Lasso 的 lambda 固定為 `0.01`，並用 coordinate descent。
-- 預設步驟：優先選第一個所有保留特徵 p-value 都小於 0.05 的步驟；沒有則選全部特徵以外的最後可用步驟。不得使用 test target 選方法或特徵數。
+- **Lasso**：用 training 集 fit Lasso；依絕對係數由大到小建立前 1 到全部特徵的步驟，係數相同時用原始欄位順序決定。Lasso 的 lambda 固定為 `0.01`，並用 coordinate descent。
+- 預設步驟：優先選第一個所有保留特徵 p-value 都小於 0.05 的步驟；沒有則選只保留 1 個特徵的最後一步。不得使用 test target 選方法或特徵數。
 - 模型比較的三個模型固定為：Linear Regression（OLS）、Ridge（lambda = `1`）、Lasso（lambda = `0.01`）。Ridge 與 Lasso 會先以 training 集的欄位尺度做標準化，再將係數轉回原始欄位尺度；評估使用相同的選定特徵與相同 test split。
 
 ## 5.5 內建資料集
@@ -127,7 +127,13 @@ HW2 要用一個 14–39 個特徵的資料集做多元線性回歸，走完 CRI
 
 ## 6. 實作結果
 
-本次新增功能的實作結果會在完成後補上：實際修改的檔案、與本設計不同的地方、測試結果，以及效能取捨。
+- 修改 `js/stats.js`：新增 training-only Ridge 與 Lasso；Ridge lambda = 1，Lasso lambda = 0.01。
+- 修改 `js/select.js`：新增 Forward Selection、SelectKBest、RFE、Lasso Selection；所有 steps 維持原滑桿的特徵數 N→1 順序。
+- 修改 `js/analyze.js`：新增 algorithm dispatch 與 Linear/Ridge/Lasso 的比較 API。
+- 修改 `index.html`、`js/app.js`：新增 `Feature Selection Algorithm` 選單與 `Comparison of Regression Models` 表格。
+- 修改 `README.md` 與進度／驗收文件：同步新功能和限制。
+- 與原設計的差異：Forward 會完整建立所有步驟，p-value < 0.05 只決定預設位置；Lasso 會將所有特徵依係數排序，確保滑桿步驟完整。
+- 驗證：`npm test` 47/47；Flood Lasso + 三模型比較 593ms；headless 顯示三個模型，390px iframe 的 `scrollWidth = clientWidth = 375`。
 
 ## 7. 交給實作者決定的部分
 
