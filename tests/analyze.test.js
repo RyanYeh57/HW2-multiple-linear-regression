@@ -33,6 +33,15 @@ test('Flood end to end under 5s', () => {
   assert.ok(Date.now() - t0 < 5000, `took ${Date.now() - t0}ms`);
 });
 
+// The site must show a visible prediction band, so Flood cannot be a noiseless formula.
+test('Flood data has noise: R² below 0.99 and intervals wider than 0.01', () => {
+  const { prep, selection } = analyze(load('data/flood.csv'), 'FloodProbability');
+  const { metrics, points } = fitStep(prep, selection.steps[selection.defaultIndex]);
+  assert.ok(metrics.r2 < 0.99, `r2 = ${metrics.r2}`);
+  assert.ok(points[0].hi - points[0].lo > 0.01, `width = ${points[0].hi - points[0].lo}`);
+  assert.ok(!prep.featureNames.includes('id'));
+});
+
 test('sampleEvenly keeps ends and caps length', () => {
   const s = sampleEvenly([...Array(10000).keys()]);
   assert.equal(s.length, 500);

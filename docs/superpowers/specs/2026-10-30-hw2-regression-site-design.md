@@ -43,7 +43,7 @@ HW2 要用一個 14–39 個特徵的資料集做多元線性回歸，走完 CRI
 | 項目 | 決定 |
 |---|---|
 | Repo | 開新 repo **`HW2-multiple-linear-regression`**，跟舊作業分開。`D:\git\Homework\IOT\HW2` 資料夾就是 repo 根目錄。本機沒有 `gh`，改為：使用者在 GitHub 網頁建立空 repo 並開啟 Pages，Claude 用 git 推送 |
-| Flood 資料 | 使用者從 Kaggle 下載，已放在 `data/flood.csv`（已驗證：50,000 筆、21 欄、無空值、2.3 MB） |
+| Flood 資料 | Kaggle 比賽版 playground-series-s4e5 的 `train.csv`（1,117,957 筆），用 `scripts/sample-flood.js` 隨機抽 50,000 筆（seed 42）、拿掉 `id` 欄 → `data/flood.csv`。原始檔放 `data/raw/`（gitignore，不上傳）。原本的 naiyakhalid 版是無雜訊公式（R² = 1，看不到預測區間），2026-10-30 換掉 |
 | 內建題目 | Predict the Flood、50 Startups |
 | 自訂資料 | 一個網址輸入框，貼 CSV 網址即時分析 |
 | 技術 | 不要 Python；全部在瀏覽器用 JavaScript |
@@ -94,7 +94,7 @@ HW2 要用一個 14–39 個特徵的資料集做多元線性回歸，走完 CRI
 
 | 題目 | 來源 | 特徵 | 目標 | 備註 |
 |---|---|---|---|---|
-| Predict the Flood | Kaggle「Flood Prediction Dataset」<https://www.kaggle.com/datasets/naiyakhalid/flood-prediction-dataset>，檔案 `data/flood.csv` | 20 個數字特徵（整數 0–16 左右） | `FloodProbability` | 符合 14–39 特徵要求。下拉選單顯示名稱沿用「Predict the Flood」。**不是** 110 萬列的 Kaggle 比賽版 |
+| Predict the Flood | Kaggle「Regression with a Flood Prediction Dataset」<https://www.kaggle.com/competitions/playground-series-s4e5/data> 的 `train.csv`，抽 50,000 筆存成 `data/flood.csv` | 20 個數字特徵（整數 0–16 左右） | `FloodProbability` | 符合 14–39 特徵要求。測試集 R² 約 0.85 |
 | 50 Startups | spec 範例網址 <https://raw.githubusercontent.com/Avik-Jain/100-Days-Of-ML-Code/master/datasets/50_Startups.csv>，複製一份到 `data/50_Startups.csv` | 4 個（含文字欄 `State`） | `Profit` | 只有 4 個特徵，作為「任意資料集」示範 |
 
 ### 5.5 CRISP-DM 與 AI 區塊
