@@ -61,7 +61,7 @@
 
 **Interfaces:**
 - Produces `forwardSelection(prep)`, `selectKBest(prep)`, `rfeSelection(prep)`, `lassoSelection(prep)`, and `selectionAlgorithms`.
-- Each selection function returns `{ steps, defaultIndex }` with the existing `Step` shape. Steps must contain 1 through `featureNames.length` kept features so the existing slider can render them.
+- Each selection function returns `{ steps, defaultIndex }` with the existing `Step` shape. Steps contain `featureNames.length` down to 1 kept features, matching the existing slider's `steps[0] = all features` convention.
 
 - [ ] **Step 1: Write failing tests**
   - Every algorithm returns the expected number of steps, valid feature indices, and non-empty names.

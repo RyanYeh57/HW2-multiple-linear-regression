@@ -1,6 +1,13 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { backwardElimination } from '../js/select.js';
+import {
+  backwardElimination,
+  forwardSelection,
+  selectKBest,
+  rfeSelection,
+  lassoSelection,
+  selectionAlgorithms,
+} from '../js/select.js';
 
 // Deterministic pseudo-noise in [-0.5, 0.5).
 function noise(seed) {
@@ -39,4 +46,38 @@ test('each step records train adjusted R² and test R²', () => {
     assert.ok(Number.isFinite(s.testR2));
     assert.equal(s.features.length, s.names.length);
   }
+});
+
+test('all selection algorithms return one step per feature', () => {
+  const prep = makeSyntheticPrep();
+  for (const [key, select] of Object.entries(selectionAlgorithms)) {
+    const result = select(prep);
+    assert.equal(result.steps.length, prep.featureNames.length, key);
+    assert.deepEqual(result.steps.map(s => s.features.length), [3, 2, 1], key);
+    assert.ok(result.steps.every(s => s.names.length > 0 && s.maxP >= 0), key);
+    assert.ok(result.defaultIndex >= 0 && result.defaultIndex < result.steps.length, key);
+  }
+});
+
+test('selection algorithms do not use test targets to choose features', () => {
+  const prep = makeSyntheticPrep();
+  const changed = { ...prep, ytest: prep.ytest.map((_, i) => i * 1000) };
+  for (const [key, select] of Object.entries(selectionAlgorithms)) {
+    const a = select(prep);
+    const b = select(changed);
+    assert.deepEqual(a.steps.map(s => s.features), b.steps.map(s => s.features), key);
+    assert.equal(a.defaultIndex, b.defaultIndex, key);
+  }
+});
+
+test('new selection algorithms rank the signal feature first', () => {
+  const prep = makeSyntheticPrep();
+  const forward = forwardSelection(prep);
+  const kbest = selectKBest(prep);
+  const rfe = rfeSelection(prep);
+  const lasso = lassoSelection(prep);
+  assert.equal(forward.steps.at(-1).names[0], 'x1');
+  assert.equal(kbest.steps.at(-1).names[0], 'x1');
+  assert.equal(rfe.steps.at(-1).names[0], 'x1');
+  assert.equal(lasso.steps.at(-1).names[0], 'x1');
 });
