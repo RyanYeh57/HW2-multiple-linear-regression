@@ -326,18 +326,18 @@ test('sampleEvenly', () => {
 
 ---
 
-### Task 7: 內容區塊、README
+### Task 7: 資料來源、README
+
+> 2026-10-30 使用者決定：CRISP-DM、GPT、NotebookLM 另外繳交，不放網站。原 Step 1、2 與 `ai/` 資料夾取消。
 
 **Files:**
-- Modify: `index.html`（`#crisp-dm`、`#ai-gpt`、`#ai-notebooklm`、`#sources`）、`styles.css`（`.todo` 紅色待補樣式）
-- Create: `README.md`、`ai/.gitkeep`
+- Modify: `index.html`（`#sources`）
+- Create: `README.md`
 
-- [ ] **Step 1: `#crisp-dm`** — 六階段各 2–4 句，以 Predict the Flood 為主題，對應本網站實際做法（Business：預測洪水機率幫助防災資源分配；Data：50,000 筆、20 特徵、無缺值；Preparation：80/20、seed 42、補值、One-Hot；Modeling：OLS + backward elimination；Evaluation：R²、Adj R²、MAE、RMSE、預測區間、殘差；Deployment：GitHub Pages 靜態網站、可貼網址分析新資料）。不寫具體分數。
-- [ ] **Step 2: AI 區塊** — 標題必須正好是「GPT 輔助內容」與「NotebookLM 摘要」。內文為 `<p class="todo">待補：…</p>`（紅色、醒目），說明要放什麼（GPT 對話 PDF 放 `ai/` 並加連結；NotebookLM 摘要 ≥ 100 字）。
-- [ ] **Step 3: `#sources`** — Flood：Kaggle 連結 `https://www.kaggle.com/datasets/naiyakhalid/flood-prediction-dataset`；50 Startups：spec 範例網址。
-- [ ] **Step 4: `README.md`**（繁中）— 線上網址 `https://ryanyeh57.github.io/HW2-multiple-linear-regression/`、功能、資料來源、本機預覽（`python -m http.server 8000`）、測試（`npm test`）、`?url=` 分享用法、限制（CORS、只做線性回歸）、交作業前待補清單（GPT PDF、NotebookLM 摘要）。
-- [ ] **Step 5: 驗證** — headless dump-dom 確認四個 section 都有內容、`.todo` 存在；`npm test` 全綠。
-- [ ] **Step 6: Commit** — `git commit -m "docs: add CRISP-DM, AI placeholders, sources and README"`
+- [ ] **Step 1: `#sources`** — Flood：Kaggle 連結（依最終 Flood 資料決定）；50 Startups：spec 範例網址。
+- [ ] **Step 2: `README.md`**（繁中）— 線上網址 `https://ryanyeh57.github.io/HW2-multiple-linear-regression/`、功能、資料來源、本機預覽（`python -m http.server 8000`）、測試（`npm test`）、`?url=` 分享用法、限制（CORS、只做線性回歸）。
+- [ ] **Step 3: 驗證** — headless dump-dom 確認 `#sources` 有內容、頁面沒有 `#crisp-dm`／`#ai-gpt`／`#ai-notebooklm`；`npm test` 全綠。
+- [ ] **Step 4: Commit** — `git commit -m "docs: add data sources and README"`
 
 ---
 

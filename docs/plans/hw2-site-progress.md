@@ -13,7 +13,7 @@
 
 ## 進行中
 - 等使用者決定 Flood 資料：A = 換 Kaggle 比賽版 playground-series-s4e5（抽 5 萬筆），B = 保留現有確定性資料。現有 `data/flood.csv` 的 R² = 1，看不到預測區間。
-- 下一步第一個動作：使用者回覆後處理資料；之後做 Task 7（CRISP-DM、AI 區塊、資料來源、README）
+- 下一步第一個動作：使用者回覆後處理資料；之後做 Task 7（資料來源、README）。CRISP-DM／GPT／NotebookLM 使用者另外繳交，不放網站（2026-10-30）
 
 ## 未動
 - Task 7–8、最終審查
