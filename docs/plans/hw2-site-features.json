@@ -8,6 +8,6 @@
   { "id": "F-07", "description": "預測圖含 95% 預測區間帶、殘差圖、係數表（含 SE、p-value）", "verification_steps": ["npm test 的 analyze 測試全過（lo<fit<hi）", "headless 截圖可見帶狀區間與殘差圖"], "passes": true },
   { "id": "F-08", "description": "Flood 分析在 5 秒內完成，20 個特徵", "verification_steps": ["npm test 的 Flood end to end 測試通過"], "passes": true },
   { "id": "F-09", "description": "樣式 B，且與舊作業不同；手機寬不橫向捲動", "verification_steps": ["1400 寬截圖：白底、左欄、墨綠", "390 寬截圖：單欄無橫向捲動", "grep styles.css 無 #5b55db、無 Inter"], "passes": true },
-  { "id": "F-10", "description": "網頁有資料來源；CRISP-DM／GPT／NotebookLM 另外繳交，不放網站（使用者 2026-10-30 決定）", "verification_steps": ["headless dump-dom：#sources 有兩個資料集連結", "頁面沒有 #crisp-dm、#ai-gpt、#ai-notebooklm"], "passes": false },
+  { "id": "F-10", "description": "網頁有資料來源；CRISP-DM／GPT／NotebookLM 另外繳交，不放網站（使用者 2026-10-30 決定）", "verification_steps": ["headless dump-dom：#sources 有兩個資料集連結", "頁面沒有 #crisp-dm、#ai-gpt、#ai-notebooklm"], "passes": true },
   { "id": "F-11", "description": "README 與線上 GitHub Pages 可用", "verification_steps": ["README 存在且含線上網址、本機預覽、測試指令", "線上網址回 200，headless 線上 #metrics 有數字"], "passes": false }
 ]
