@@ -15,8 +15,7 @@
 - README 已同步五種特徵選擇、三種模型、lambda 與 test line 限制
 
 ## 進行中
-- Task 5：文件與最終驗證。下一步第一個動作：用同源 iframe 驗證切換 `lasso` 後頁面仍有比較表，再更新 F-12～F-15。
-- GitHub Pages 仍未發布；F-11 保持 false。
+- GitHub Pages 仍未發布；F-11 保持 false。需要使用者同意後才可 merge、push 和開 Pages。
 
 ## 未動
-- Task 5 commit、final review、合併到 `main`、push 與 Pages 線上驗證
+- 合併到 `main`、push 與 Pages 線上驗證
