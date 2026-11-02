@@ -2,7 +2,7 @@
 
 線上網址：<https://ryanyeh57.github.io/HW2-multiple-linear-regression/>
 
-純靜態網頁。所有計算都在瀏覽器裡用 JavaScript 完成，不需要後端，也沒有外部套件。
+![網頁圖片](./page.png)
 
 ## 功能
 
