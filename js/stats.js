@@ -185,14 +185,17 @@ export function ridge(X, y, lambda = 1) {
 
 const softThreshold = (value, amount) => Math.sign(value) * Math.max(Math.abs(value) - amount, 0);
 
-// Lasso regression with centered, scaled columns and an unpenalized intercept.
+// Lasso regression on standardized columns and target, with an unpenalized intercept.
+// Standardizing y keeps lambda independent of the target's units.
+// Returns `standardized` (coefficients on the standardized scale) for scale-free ranking.
 export function lasso(X, y, lambda = 0.01, options = {}) {
   const n = X.length;
   const k = X[0]?.length ?? 0;
   if (n === 0) throw new AnalysisError('沒有資料可供回歸');
   const { Z, mean, scale } = scaledColumns(X);
   const yMean = y.reduce((sum, v) => sum + v, 0) / n;
-  const centeredY = y.map(v => v - yMean);
+  const yScale = Math.sqrt(y.reduce((sum, v) => sum + (v - yMean) ** 2, 0) / n) || 1;
+  const centeredY = y.map(v => (v - yMean) / yScale);
   const beta = new Array(k).fill(0);
   const residual = centeredY.slice();
   const maxIter = options.maxIter ?? 200;
@@ -212,9 +215,9 @@ export function lasso(X, y, lambda = 0.01, options = {}) {
     if (maxChange < tolerance) break;
   }
 
-  const coef = [yMean, ...beta.map((v, j) => v / scale[j])];
+  const coef = [yMean, ...beta.map((v, j) => (v * yScale) / scale[j])];
   coef[0] -= mean.reduce((sum, v, j) => sum + coef[j + 1] * v, 0);
-  return { coef };
+  return { coef, standardized: beta };
 }
 
 export function predict(model, X) {

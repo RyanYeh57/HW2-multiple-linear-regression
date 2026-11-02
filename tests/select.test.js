@@ -81,3 +81,17 @@ test('new selection algorithms rank the signal feature first', () => {
   assert.equal(rfe.steps.at(-1).names[0], 'x1');
   assert.equal(lasso.steps.at(-1).names[0], 'x1');
 });
+
+test('lasso selection ranks by standardized effect, not raw coefficient size', () => {
+  const r = noise(11);
+  const make = n => {
+    // x1 has a tiny raw coefficient on a wide scale; x2 is a 0/1 dummy with a large raw coefficient.
+    const X = Array.from({ length: n }, (_, i) => [r() * 1000, i % 2, r()]);
+    const y = X.map(([x1, x2]) => 0.01 * x1 + 1 * x2 + 0.1 * r());
+    return { X, y };
+  };
+  const train = make(160);
+  const test = make(40);
+  const prep = { Xtrain: train.X, ytrain: train.y, Xtest: test.X, ytest: test.y, featureNames: ['x1', 'x2', 'x3'] };
+  assert.equal(lassoSelection(prep).steps.at(-1).names[0], 'x1');
+});

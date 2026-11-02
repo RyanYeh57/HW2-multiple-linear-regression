@@ -97,9 +97,9 @@ HW2 要用一個 14–39 個特徵的資料集做多元線性回歸，走完 CRI
 - **Forward Selection**：從零個特徵開始，每一步加入 training OLS p-value 最小的剩餘特徵；p-value 門檻只用於決定預設步驟，不會停止建立完整滑桿步驟。
 - **SelectKBest**：依 training 集中每個特徵與目標的單變量相關強度排序，建立前 1 到全部特徵的步驟。
 - **RFE**：從全部特徵開始，每一步刪掉 training OLS 中絕對 t 值最小的特徵。
-- **Lasso**：用 training 集 fit Lasso；依絕對係數由大到小建立前 1 到全部特徵的步驟，係數相同時用原始欄位順序決定。Lasso 的 lambda 固定為 `0.01`，並用 coordinate descent。
+- **Lasso**：用 training 集 fit Lasso；依**標準化後**係數的絕對值由大到小建立前 1 到全部特徵的步驟（避免原始單位影響排序，例如 0/1 欄位與金額欄位），係數相同時用原始欄位順序決定。Lasso 的 lambda 固定為 `0.01`，並用 coordinate descent。
 - 預設步驟：優先選第一個所有保留特徵 p-value 都小於 0.05 的步驟；沒有則選只保留 1 個特徵的最後一步。不得使用 test target 選方法或特徵數。
-- 模型比較的三個模型固定為：Linear Regression（OLS）、Ridge（lambda = `1`）、Lasso（lambda = `0.01`）。Ridge 與 Lasso 會先以 training 集的欄位尺度做標準化，再將係數轉回原始欄位尺度；評估使用相同的選定特徵與相同 test split。
+- 模型比較的三個模型固定為：Linear Regression（OLS）、Ridge（lambda = `1`）、Lasso（lambda = `0.01`）。Ridge 與 Lasso 會先以 training 集的欄位尺度做標準化，再將係數轉回原始欄位尺度；Lasso 另將 training 目標值標準化，使 lambda 不受目標單位影響（2026-11-02 修正：原本 Flood 目標值範圍僅 0.32–0.71，lambda 0.01 讓所有係數歸零）。評估使用相同的選定特徵與相同 test split。
 
 ## 5.5 內建資料集
 

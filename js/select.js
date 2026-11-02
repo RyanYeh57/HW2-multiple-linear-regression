@@ -116,7 +116,7 @@ export function rfeSelection(prep) {
 
 export function lassoSelection(prep) {
   const model = lasso(prep.Xtrain, prep.ytrain, 0.01);
-  const order = rankDescending(model.coef.slice(1).map(Math.abs));
+  const order = rankDescending(model.standardized.map(Math.abs));
   return buildSteps(prep, order);
 }
 

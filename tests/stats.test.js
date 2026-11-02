@@ -71,3 +71,12 @@ test('lasso gives the signal feature a larger coefficient than noise', () => {
   assert.ok(regularized.coef.every(Number.isFinite));
   assert.ok(Math.abs(regularized.coef[1]) > Math.abs(regularized.coef[2]) * 2);
 });
+
+test('lasso does not depend on the target scale', () => {
+  const X = Array.from({ length: 40 }, (_, i) => [i / 10, ((i * 17) % 11) - 5]);
+  const y = X.map(([signal, other], i) => 3 + 4 * signal + 0.2 * other + ((i * 7) % 5 - 2) * 0.1);
+  const big = lasso(X, y, 0.01);
+  const small = lasso(X, y.map(v => v / 1000), 0.01);
+  assert.ok(big.coef[1] !== 0);
+  big.coef.forEach((v, j) => close(small.coef[j] * 1000, v, 1e-6 * Math.max(1, Math.abs(v))));
+});
