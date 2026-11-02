@@ -23,6 +23,17 @@
 5. 只用訓練集做特徵選擇和擬合；指標在測試集計算。測試線只供參考，不用來挑方法或特徵數。
 6. 預測圖沿用 OLS，顯示 95% 預測區間；Ridge 和 Lasso 用於模型比較。
 
+## CRISP-DM 流程
+
+| 階段 | 這個專案做了什麼 | 網頁位置 |
+|---|---|---|
+| Business Understanding | 預測一個連續數值：Flood 預測洪水機率 `FloodProbability`，50 Startups 預測公司利潤 `Profit`。自訂網址可選任一數字欄當目標。 | 左側「資料集」、「目標欄位」 |
+| Data Understanding | 顯示可用筆數、缺值數、特徵數，以及被丟掉的欄位和原因。 | 1. 資料概覽 |
+| Data Preparation | 刪掉目標欄空白的列；數字缺值補訓練集平均；文字欄 One-Hot；丟掉常數欄和類別太多的文字欄；80/20 切分（seed 42）。 | 1. 資料概覽 |
+| Modeling | 五種特徵選擇（Backward、Forward、SelectKBest、RFE、Lasso），只用訓練集。比較 Linear Regression、Ridge（lambda = 1）、Lasso（lambda = 0.01）。 | 2. Feature Selection Algorithm、3. Comparison of Regression Models、7. 迴歸係數 |
+| Evaluation | 在測試集算 R²、Adjusted R²、MAE、RMSE；畫含 95% 預測區間的預測圖和殘差圖。測試集不用來挑特徵或模型。 | 4. 模型評估、5. 預測圖、6. 殘差圖 |
+| Deployment | 純靜態網站放在 GitHub Pages，所有計算在瀏覽器完成；可用 `?url=` 分享分析連結。 | 線上網址 |
+
 ## 資料來源
 
 | 題目 | 來源 | 筆數 | 特徵 |
